@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import glavnipaket.EntitetZaBazu;
+import glavnipaket.ProbniMain;
 import glavnipaket.entiteti.Product;
 import glavnipaket.entiteti.Buyer;
 
@@ -110,6 +111,7 @@ public class BazaPodataka {
     public ArrayList<EntitetZaBazu> prikaziEntiteteIzManyToManyTabelePoUslovu(EntitetZaBazu instancaEntitetaZaPrikaz, EntitetZaBazu entitetDrugeKlase, String kljucPrveTabele, String kljucDrugeTabele, String prvaTabela, String drugaTabela, String manyToManyTabela, ArrayList<String> uslovi){
             String uslov = (uslovi==NEMA_USLOVA)? "(1=1)" : spojiUslove(uslovi);
             String sql = String.format("SELECT * FROM %s LEFT JOIN %s ON %s.%s=%s.%s LEFT JOIN %s ON %s.%s=%s.%s WHERE %s;", prvaTabela, manyToManyTabela, prvaTabela, kljucPrveTabele, manyToManyTabela, kljucPrveTabele, drugaTabela, drugaTabela, kljucDrugeTabele, manyToManyTabela, kljucDrugeTabele, uslov);
+
 
             NazivVrednostPolja[] nvpEntitetaZaPrikaz = instancaEntitetaZaPrikaz.getNaziveVrednostiPolja();
             NazivVrednostPolja[] nvpDrugogEntiteta = entitetDrugeKlase.getNaziveVrednostiPolja();

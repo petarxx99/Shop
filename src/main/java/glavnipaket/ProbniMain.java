@@ -166,4 +166,11 @@ public class ProbniMain {
         prozor.setVisible(true);
         return prozor;
     }
+
+    public static void ispisiTekstNaJFrejm(String tekst){
+        JFrame frejm = napraviFrejm(500, 500);
+        JTextArea ta = staviTextFieldNaProzor(frejm);
+        ta.setText(tekst);
+        frejm.validate();
+    }
 }

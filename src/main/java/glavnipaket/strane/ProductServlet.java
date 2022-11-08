@@ -34,30 +34,34 @@ public class ProductServlet extends HttpServlet{
 
     public void obradiPodatke(HttpServletRequest request, HttpServletResponse response){
         BazaPodataka baza = new BazaPodataka();
+        ArrayList<String> uslovi = pronadjiUslove(request, new Product());
+        ArrayList<EntitetZaBazu> products = baza.prikaziEntiteteIzJedneTabele("products", new Product(), uslovi);
         try {
-            ArrayList<EntitetZaBazu> products = new ArrayList<>();
-            ArrayList<String> uslovi;  // uslov1, uslov2, uslov3...
-
-            if(request.getParameter(USLOV + 1) == null){
-                uslovi = BazaPodataka.NEMA_USLOVA;
-            } else {
-                uslovi = new ArrayList();
-                int i=1;
-                while(request.getParameter(USLOV + i) != null){
-                    uslovi.add(request.getParameter(USLOV + i));
-                    i++;
-                }
-            }
-
-            products = baza.prikaziEntiteteIzJedneTabele("products", new Product(), uslovi);
             String tabelaHtml = HtmlUtil.napraviHtmlTabelu(products);
             HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Products", tabelaHtml);
         } catch(MojException exception){
             exception.printStackTrace();
         }
-
     }
 
 
+    public static ArrayList<String> pronadjiUslove(HttpServletRequest request, EntitetZaBazu entitet){
+        ArrayList<String> uslovi = new ArrayList<>();
+        String[] naziviPolja  = entitet.getNazivePolja();
 
+        for(String polje : naziviPolja){
+            if(uslovPostoji("checkbox" + polje, request)){
+                uslovi.add(request.getParameter(polje));
+            }
+        }
+
+        if(uslovi.size() == 0){
+            return BazaPodataka.NEMA_USLOVA;
+        }
+        return uslovi;
+    }
+
+    public static boolean uslovPostoji(String checkbox, HttpServletRequest request){
+        return request.getParameter(checkbox) == null;
+    }
 }
