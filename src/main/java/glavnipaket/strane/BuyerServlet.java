@@ -6,6 +6,7 @@ import glavnipaket.entiteti.Buyer;
 import glavnipaket.entiteti.Product;
 import glavnipaket.strane.util.HtmlUtil;
 import glavnipaket.strane.util.MojException;
+import glavnipaket.strane.util.UrlUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -35,28 +36,14 @@ public class BuyerServlet extends HttpServlet{
 
     public void obradiPodatke(HttpServletRequest request, HttpServletResponse response){
         BazaPodataka baza = new BazaPodataka();
+        ArrayList<String> uslovi = UrlUtil.pronadjiUslove(request, new Buyer());
+        ArrayList buyers = baza.prikaziEntiteteIzJedneTabele("buyers", new Buyer(), uslovi);
         try {
-            ArrayList<EntitetZaBazu> buyers = new ArrayList<>();
-            ArrayList<String> uslovi;  // uslov1, uslov2, uslov3...
-
-            if(request.getParameter(USLOV + 1) == null){
-                uslovi = BazaPodataka.NEMA_USLOVA;
-            } else {
-                uslovi = new ArrayList();
-                int i=1;
-                while(request.getParameter(USLOV + i) != null){
-                    uslovi.add(request.getParameter(USLOV + i));
-                    i++;
-                }
-            }
-
-            buyers = baza.prikaziEntiteteIzJedneTabele("buyers", new Buyer(), uslovi);
             String tabelaHtml = HtmlUtil.napraviHtmlTabelu(buyers);
             HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Buyers", tabelaHtml);
         } catch(MojException exception){
             exception.printStackTrace();
         }
-
     }
 
 

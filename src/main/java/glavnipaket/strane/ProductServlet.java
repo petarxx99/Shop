@@ -5,6 +5,7 @@ import glavnipaket.baza.BazaPodataka;
 import glavnipaket.entiteti.Product;
 import glavnipaket.strane.util.HtmlUtil;
 import glavnipaket.strane.util.MojException;
+import glavnipaket.strane.util.UrlUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -34,7 +35,7 @@ public class ProductServlet extends HttpServlet{
 
     public void obradiPodatke(HttpServletRequest request, HttpServletResponse response){
         BazaPodataka baza = new BazaPodataka();
-        ArrayList<String> uslovi = pronadjiUslove(request, new Product());
+        ArrayList<String> uslovi = UrlUtil.pronadjiUslove(request, new Product());
         ArrayList<EntitetZaBazu> products = baza.prikaziEntiteteIzJedneTabele("products", new Product(), uslovi);
         try {
             String tabelaHtml = HtmlUtil.napraviHtmlTabelu(products);
@@ -45,23 +46,4 @@ public class ProductServlet extends HttpServlet{
     }
 
 
-    public static ArrayList<String> pronadjiUslove(HttpServletRequest request, EntitetZaBazu entitet){
-        ArrayList<String> uslovi = new ArrayList<>();
-        String[] naziviPolja  = entitet.getNazivePolja();
-
-        for(String polje : naziviPolja){
-            if(uslovPostoji("checkbox" + polje, request)){
-                uslovi.add(request.getParameter(polje));
-            }
-        }
-
-        if(uslovi.size() == 0){
-            return BazaPodataka.NEMA_USLOVA;
-        }
-        return uslovi;
-    }
-
-    public static boolean uslovPostoji(String checkbox, HttpServletRequest request){
-        return request.getParameter(checkbox) == null;
-    }
 }

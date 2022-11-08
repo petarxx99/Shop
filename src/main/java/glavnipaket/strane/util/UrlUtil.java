@@ -1,5 +1,6 @@
 package glavnipaket.strane.util;
 
+import glavnipaket.EntitetZaBazu;
 import glavnipaket.baza.BazaPodataka;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,5 +22,25 @@ public class UrlUtil {
             }
         }
         return uslovi;
+    }
+
+    public static ArrayList<String> pronadjiUslove(HttpServletRequest request, EntitetZaBazu entitet){
+        ArrayList<String> uslovi = new ArrayList<>();
+        String[] naziviPolja  = entitet.getNazivePolja();
+
+        for(String polje : naziviPolja){
+            if(uslovPostoji("checkbox" + polje, request)){
+                uslovi.add(request.getParameter(polje));
+            }
+        }
+
+        if(uslovi.size() == 0){
+            return BazaPodataka.NEMA_USLOVA;
+        }
+        return uslovi;
+    }
+
+    public static boolean uslovPostoji(String checkbox, HttpServletRequest request){
+        return request.getParameter(checkbox) == null;
     }
 }
