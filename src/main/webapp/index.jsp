@@ -26,10 +26,10 @@
           <input type="text" name="drzavaproizvodnje"> <br>
 
           <input type="checkbox" name="cenacheckbox">
-          <label for="minimalnacena"> cena: </label>
+          <label for="minimalnacena"> minimalna cena: </label>
           <input type="text" name="minimalnacena"> <br>
 
-          <label for="maksimalnacena"> cena: </label>
+          <label for="maksimalnacena"> maksimalna cena: </label>
           <input type="text" name="maksimalnacena"> <br>
 
         <input type="submit" value="idi na stranu products">
