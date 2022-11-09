@@ -24,6 +24,7 @@ public class BuyerServlet extends HttpServlet{
     public final String USLOVI_POSTOJE = "uslovipostoje";
     public final String USLOV = "uslov";
 
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         obradiPodatke(req, resp);
@@ -36,7 +37,7 @@ public class BuyerServlet extends HttpServlet{
 
     public void obradiPodatke(HttpServletRequest request, HttpServletResponse response){
         BazaPodataka baza = new BazaPodataka();
-        ArrayList<String> uslovi = UrlUtil.pronadjiUslove(request, new Buyer());
+        ArrayList<String> uslovi = pronadjiUslove(request);
         ArrayList buyers = baza.prikaziEntiteteIzJedneTabele("buyers", new Buyer(), uslovi);
         try {
             String tabelaHtml = HtmlUtil.napraviHtmlTabelu(buyers);
@@ -46,6 +47,24 @@ public class BuyerServlet extends HttpServlet{
         }
     }
 
+    public static ArrayList<String> pronadjiUslove(HttpServletRequest request){
+        ArrayList<String> uslovi = new ArrayList<>();
+
+        if(UrlUtil.uslovPostoji("buyeridcheckbox", request)){
+            uslovi.add("buyers.buyer_id = " + request.getParameter("buyerid"));
+        }
+        if(UrlUtil.uslovPostoji("imecheckbox", request)){
+            uslovi.add("buyers.ime = '" + request.getParameter("ime"));
+        }
+        if(UrlUtil.uslovPostoji("prezimecheckbox", request)){
+            uslovi.add("buyers.prezime = '" + request.getParameter("prezime"));
+        }
+
+        if(uslovi.size() == 0){
+            return BazaPodataka.NEMA_USLOVA;
+        }
+        return uslovi;
+    }
 
 
 }

@@ -2,9 +2,11 @@ package glavnipaket.strane.util;
 
 import glavnipaket.EntitetZaBazu;
 import glavnipaket.baza.BazaPodataka;
+import glavnipaket.baza.NazivVrednostPolja;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class UrlUtil {
 
@@ -27,10 +29,13 @@ public class UrlUtil {
     public static ArrayList<String> pronadjiUslove(HttpServletRequest request, EntitetZaBazu entitet){
         ArrayList<String> uslovi = new ArrayList<>();
         String[] naziviPolja  = entitet.getNazivePolja();
+        for(int i=0; i< naziviPolja.length; i++){
+            naziviPolja[i] = naziviPolja[i].toLowerCase().replace("_", "");
+        }
 
         for(String polje : naziviPolja){
-            if(uslovPostoji("checkbox" + polje, request)){
-                uslovi.add(request.getParameter(polje));
+            if(uslovPostoji(polje + "checkbox", request)){
+                uslovi.add(polje + "="+request.getParameter(polje));
             }
         }
 
@@ -40,7 +45,10 @@ public class UrlUtil {
         return uslovi;
     }
 
+
+
     public static boolean uslovPostoji(String checkbox, HttpServletRequest request){
-        return request.getParameter(checkbox) == null;
+        if(request.getParameter(checkbox) == null) return false;
+        return request.getParameter(checkbox).equals("on");
     }
 }

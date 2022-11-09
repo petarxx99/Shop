@@ -35,15 +35,42 @@ public class ProductServlet extends HttpServlet{
 
     public void obradiPodatke(HttpServletRequest request, HttpServletResponse response){
         BazaPodataka baza = new BazaPodataka();
-        ArrayList<String> uslovi = UrlUtil.pronadjiUslove(request, new Product());
+        ArrayList<String> uslovi = pronadjiUslove(request);
         ArrayList<EntitetZaBazu> products = baza.prikaziEntiteteIzJedneTabele("products", new Product(), uslovi);
         try {
             String tabelaHtml = HtmlUtil.napraviHtmlTabelu(products);
             HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Products", tabelaHtml);
         } catch(MojException exception){
             exception.printStackTrace();
+            HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Product", "Nema entiteta u bazi.");
         }
     }
 
+    public static ArrayList<String> pronadjiUslove(HttpServletRequest request){
+        ArrayList<String> uslovi = new ArrayList<>();
+
+        if(UrlUtil.uslovPostoji("productidcheckbox", request)) {
+            uslovi.add("products.product_id = " + request.getParameter("productid"));
+        }
+        if(UrlUtil.uslovPostoji("nazivcheckbox", request)) {
+            uslovi.add("products.naziv = '" + request.getParameter("naziv") + "'");
+        }
+        if(UrlUtil.uslovPostoji("proizvodjaccheckbox", request)){
+            uslovi.add("products.proizvodjac = '" + request.getParameter("proizvodjac") + "'");
+        }
+        if(UrlUtil.uslovPostoji("drzavaproizvodnjecheckbox", request)){
+            uslovi.add("products.drzava_proizvodnje = '" + request.getParameter("drzavaproizvodnje"));
+        }
+
+        if(UrlUtil.uslovPostoji("cenacheckbox", request)){
+            uslovi.add("products.cena >= " + request.getParameter("minimalnacena"));
+            uslovi.add("products.cena <= " + request.getParameter("maksimalnacena"));
+        }
+
+        if(uslovi.size() == 0){
+            return BazaPodataka.NEMA_USLOVA;
+        }
+        return uslovi;
+    }
 
 }

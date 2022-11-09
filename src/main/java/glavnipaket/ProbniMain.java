@@ -74,6 +74,7 @@ public class ProbniMain {
         }
     }
 
+
     public static void salesProba(ArrayList productsP, BazaPodataka baza){
         ArrayList<String> uslovi = new ArrayList<>();
         uslovi.add("products.cena > 50");

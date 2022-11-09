@@ -46,6 +46,9 @@ public class HtmlUtil {
         if(entiteti == null){
                 throw new NemaEntitetaUBazi();
         }
+        if(entiteti.size() < 1){
+            throw new NemaEntitetaUBazi();
+        }
 
         final int BROJ_REDOVA = entiteti.size();
         final int BROJ_KOLONA = entiteti.get(0).getNaziveVrednostiPolja().length;

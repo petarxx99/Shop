@@ -42,13 +42,15 @@ public class SalesServlet extends HttpServlet{
     public void obradiPodatke(HttpServletRequest request, HttpServletResponse response){
         BazaPodataka baza = new BazaPodataka();
         String tabelaHtml = napraviHtmlTabeleProdajaUzPomocPodatakaIzBaze(request, response, baza);
-
-
+        HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", tabelaHtml);
     }
 
 
     public static String napraviHtmlTabeleProdajaUzPomocPodatakaIzBaze(HttpServletRequest request, HttpServletResponse response, BazaPodataka baza){
-        ArrayList<String> uslovi = UrlUtil.pronadjiUslove(request, USLOV);
+        ArrayList<String> usloviProduct = ProductServlet.pronadjiUslove(request);
+        ArrayList<String> usloviBuyer = BuyerServlet.pronadjiUslove(request);
+        ArrayList<String> uslovi = spojiUrlUslove(usloviProduct, usloviBuyer);
+
         try {
             ArrayList<EntitetZaBazu> products = baza.prikaziEntiteteIzTabele("products", "buyers", "sales",
                     "product_id", "buyer_id",
@@ -62,9 +64,12 @@ public class SalesServlet extends HttpServlet{
 
     public static String napraviSalesTabelu(ArrayList productsP) throws NemaEntitetaUBazi{
         ArrayList<Product> products = (ArrayList<Product>) productsP;
+        if(products == null){
+            throw new NemaEntitetaUBazi();
+        }
         products = products.stream().filter(product -> product.getBuyers() != null).collect(Collectors.toCollection(ArrayList::new));
 
-        if(products == null){
+        if(products.size() <1){
             throw new NemaEntitetaUBazi();
         }
 
@@ -112,6 +117,17 @@ public class SalesServlet extends HttpServlet{
 
         sb.append("</table>");
         return sb.toString();
+    }
+
+    public static ArrayList<String> spojiUrlUslove(ArrayList<String> uslovi1, ArrayList<String> uslovi2){
+        if(uslovi1 == null && uslovi2==null) return null;
+        if(uslovi1==null) return uslovi2;
+        if(uslovi2==null) return uslovi1;
+
+        ArrayList<String> spojeniUslovi = new ArrayList<>();
+        spojeniUslovi.addAll(uslovi1);
+        spojeniUslovi.addAll(uslovi2);
+        return spojeniUslovi;
     }
 
 }
