@@ -177,7 +177,7 @@
         if(UrlUtil.uslovPostoji("brisiproduct", request)){
             try{
                 new BazaPodataka().izbrisiteEntitet(Integer.parseInt(request.getParameter("idproductzabrisanje")), "products", "product_id");
-            catch(Exception e){
+            }catch(Exception e){
                 e.printStackTrace();
             }
         }
@@ -201,5 +201,26 @@
                 }
             }
         %>
+
+
+        <form action="index.jsp" method="POST">
+            <label for="updateproductcheckbox"> Stiklirajte ovde da biste updejtovali vrednosti product-a.  </label>
+            <input type="checkbox" name="updateproductcheckbox">
+            <br>
+            Stiklirajte polja koja zelite da updejtujete.
+
+            <br>
+            <label for="idupdateproduct"> Upisite id proizvoda kog updejtujete </label>
+            <input type="text" name="idupdateproduct">
+
+
+            <label for="nazivupdateproduct"> nov naziv: </label>
+            <input type="text" name="nazivupdateproduct">
+            <input type="checkbox" name="checkboxnazivupdateproduct">
+            <br>
+
+
+            <input type="submit" value="Updejtujte product.">
+        </form>
 </body>
 </html>
