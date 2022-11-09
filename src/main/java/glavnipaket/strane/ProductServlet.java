@@ -23,6 +23,8 @@ public class ProductServlet extends HttpServlet{
     public final String USLOVI_POSTOJE = "uslovipostoje";
     public final String USLOV = "uslov";
 
+    private boolean prvaProba = true;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         obradiPodatke(req, resp);
@@ -36,13 +38,19 @@ public class ProductServlet extends HttpServlet{
     public void obradiPodatke(HttpServletRequest request, HttpServletResponse response){
         BazaPodataka baza = new BazaPodataka();
         ArrayList<String> uslovi = pronadjiUslove(request);
-        ArrayList<EntitetZaBazu> products = baza.prikaziEntiteteIzJedneTabele("products", new Product(), uslovi);
+
         try {
+            ArrayList<EntitetZaBazu> products = baza.prikaziEntiteteIzJedneTabele("products", new Product(), uslovi);
             String tabelaHtml = HtmlUtil.napraviHtmlTabelu(products);
             HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Products", tabelaHtml);
-        } catch(MojException exception){
-            exception.printStackTrace();
-            HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Product", "Nema entiteta u bazi.");
+        } catch(Exception exception){
+            if(prvaProba){
+                prvaProba = false;
+                obradiPodatke(request, response);
+            } else {
+                exception.printStackTrace();
+                HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Product", UrlUtil.EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE);
+            }
         }
     }
 

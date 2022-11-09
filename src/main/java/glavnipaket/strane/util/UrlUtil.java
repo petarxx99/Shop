@@ -10,6 +10,8 @@ import java.util.Arrays;
 
 public class UrlUtil {
 
+    public static final String EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE = "Nema entiteta u tabeli. Molim Vas pokusajte ponovo.";
+
     public static ArrayList<String> pronadjiUslove(HttpServletRequest request, String USLOV){
         ArrayList<String> uslovi;  // uslov1, uslov2, uslov3...
 

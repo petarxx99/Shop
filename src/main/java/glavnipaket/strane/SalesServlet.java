@@ -28,6 +28,7 @@ public class SalesServlet extends HttpServlet{
 
     public static final String USLOVI_POSTOJE = "uslovipostoje";
     public static final String USLOV = "uslov";
+    private boolean prvaProba = true;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -40,13 +41,23 @@ public class SalesServlet extends HttpServlet{
     }
 
     public void obradiPodatke(HttpServletRequest request, HttpServletResponse response){
-        BazaPodataka baza = new BazaPodataka();
-        String tabelaHtml = napraviHtmlTabeleProdajaUzPomocPodatakaIzBaze(request, response, baza);
-        HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", tabelaHtml);
+        try {
+            BazaPodataka baza = new BazaPodataka();
+            String tabelaHtml = napraviHtmlTabeleProdajaUzPomocPodatakaIzBaze(request, response, baza);
+            HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", tabelaHtml);
+        } catch(MojException exception){
+            if(prvaProba){
+                prvaProba = false;
+                obradiPodatke(request, response);
+            } else {
+                exception.printStackTrace();
+                HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", UrlUtil.EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE);
+            }
+        }
     }
 
 
-    public static String napraviHtmlTabeleProdajaUzPomocPodatakaIzBaze(HttpServletRequest request, HttpServletResponse response, BazaPodataka baza){
+    public static String napraviHtmlTabeleProdajaUzPomocPodatakaIzBaze(HttpServletRequest request, HttpServletResponse response, BazaPodataka baza) throws MojException{
         ArrayList<String> usloviProduct = ProductServlet.pronadjiUslove(request);
         ArrayList<String> usloviBuyer = BuyerServlet.pronadjiUslove(request);
         ArrayList<String> uslovi = spojiUrlUslove(usloviProduct, usloviBuyer);
@@ -58,7 +69,7 @@ public class SalesServlet extends HttpServlet{
             return napraviSalesTabelu(products);
         } catch(MojException exception){
             exception.printStackTrace();
-            return "Nema tabele. Dogodila se greska.";
+            throw new MojException();
         }
     }
 

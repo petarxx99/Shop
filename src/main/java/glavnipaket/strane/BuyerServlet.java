@@ -23,7 +23,7 @@ public class BuyerServlet extends HttpServlet{
 
     public final String USLOVI_POSTOJE = "uslovipostoje";
     public final String USLOV = "uslov";
-
+    private boolean prvaProba = true;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -36,15 +36,22 @@ public class BuyerServlet extends HttpServlet{
     }
 
     public void obradiPodatke(HttpServletRequest request, HttpServletResponse response){
-        BazaPodataka baza = new BazaPodataka();
-        ArrayList<String> uslovi = pronadjiUslove(request);
-        ArrayList buyers = baza.prikaziEntiteteIzJedneTabele("buyers", new Buyer(), uslovi);
-        try {
-            String tabelaHtml = HtmlUtil.napraviHtmlTabelu(buyers);
-            HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Buyers", tabelaHtml);
-        } catch(MojException exception){
-            exception.printStackTrace();
-        }
+            BazaPodataka baza = new BazaPodataka();
+            ArrayList<String> uslovi = pronadjiUslove(request);
+
+            try {
+                ArrayList buyers = baza.prikaziEntiteteIzJedneTabele("buyers", new Buyer(), uslovi);
+                String tabelaHtml = HtmlUtil.napraviHtmlTabelu(buyers);
+                HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Buyers", tabelaHtml);
+            } catch (Exception exception) {
+                if(prvaProba){
+                    prvaProba = false;
+                    obradiPodatke(request, response);
+                } else {
+                    exception.printStackTrace();
+                    HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", UrlUtil.EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE);
+                }
+            }
     }
 
     public static ArrayList<String> pronadjiUslove(HttpServletRequest request){
