@@ -4,6 +4,7 @@
 <%@page import="glavnipaket.entiteti.*"%>
 <%@page import="glavnipaket.baza.*"%>
 <%@page import="java.math.BigDecimal"%>
+<%@page import="glavnipaket.strane.util.*"%>
 
  <form action="Shop/products" method="post">
         <label> Stiklirajte polja po kojima zelite da se vrsi pretraga </label> <br>
@@ -148,15 +149,57 @@
     String productUbazu = request.getParameter("productubazu");
     if(productUbazu != null){
         if(productUbazu.equals("on")){
-            Product product = new Product(request.getParameter("naziv"),
-                                           request.getParameter("drzavaproizvodnje"),
-                                           request.getParameter("proizvodjac"),
-                                           new BigDecimal(request.getParameter("cena")));
-            BazaPodataka baza = new BazaPodataka();
-            baza.ubaciteUBazu(product, "products");
+            try{
+                Product product = new Product(request.getParameter("naziv"),
+                                                           request.getParameter("drzavaproizvodnje"),
+                                                           request.getParameter("proizvodjac"),
+                                                           new BigDecimal(request.getParameter("cena")));
+                BazaPodataka baza = new BazaPodataka();
+                baza.ubaciteUBazu(product, "products");
+            } catch(Exception exceptionCena){
+                response.sendRedirect("greska.jsp");
+            }
         }
     }
 %>
 
+    <br>
+    <br>
+    <form action="index.jsp" method="POST">
+        <label> Stiklirajte ovde ako zelite da izbrisete product iz baze. </label>
+        <input type="checkbox" name="brisiproduct"> <br>
+        <label for="idproductzabrisanje"> Upisite id product-a kog zelite da obrisete. </label>
+        <input type="text" name="idproductzabrisanje">
+        <input type="submit" value="Izbrisite product.">
+    </form>
+
+    <%
+        if(UrlUtil.uslovPostoji("brisiproduct", request)){
+            try{
+                new BazaPodataka().izbrisiteEntitet(Integer.parseInt(request.getParameter("idproductzabrisanje")), "products", "product_id");
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    %>
+
+     <br>
+        <form action="index.jsp" method="POST">
+            <label> Stiklirajte ovde ako zelite da izbrisete kupca (buyer) iz baze. </label>
+            <input type="checkbox" name="brisikupca"> <br>
+            <label for="idbuyerzabrisanje"> Upisite id product-a kog zelite da obrisete. </label>
+            <input type="text" name="idbuyerzabrisanje">
+            <input type="submit" value="Izbrisite kupca (buyer).">
+        </form>
+
+        <%
+            if(UrlUtil.uslovPostoji("brisikupca", request)){
+                try{
+                    new BazaPodataka().izbrisiteEntitet(Integer.parseInt(request.getParameter("idbuyerzabrisanje")), "buyers", "buyer_id");
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        %>
 </body>
 </html>
