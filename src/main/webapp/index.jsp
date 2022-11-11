@@ -163,44 +163,7 @@
     }
 %>
 
-    <br>
-    <br>
-    <form action="index.jsp" method="POST">
-        <label> Stiklirajte ovde ako zelite da izbrisete product iz baze. </label>
-        <input type="checkbox" name="brisiproduct"> <br>
-        <label for="idproductzabrisanje"> Upisite id product-a kog zelite da obrisete. </label>
-        <input type="text" name="idproductzabrisanje">
-        <input type="submit" value="Izbrisite product.">
-    </form>
 
-    <%
-        if(UrlUtil.uslovPostoji("brisiproduct", request)){
-            try{
-                new BazaPodataka().izbrisiteEntitet(Integer.parseInt(request.getParameter("idproductzabrisanje")), "products", "product_id");
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-    %>
-
-     <br>
-        <form action="index.jsp" method="POST">
-            <label> Stiklirajte ovde ako zelite da izbrisete kupca (buyer) iz baze. </label>
-            <input type="checkbox" name="brisikupca"> <br>
-            <label for="idbuyerzabrisanje"> Upisite id product-a kog zelite da obrisete. </label>
-            <input type="text" name="idbuyerzabrisanje">
-            <input type="submit" value="Izbrisite kupca (buyer).">
-        </form>
-
-        <%
-            if(UrlUtil.uslovPostoji("brisikupca", request)){
-                try{
-                    new BazaPodataka().izbrisiteEntitet(Integer.parseInt(request.getParameter("idbuyerzabrisanje")), "buyers", "buyer_id");
-                } catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-        %>
 
 
 </body>
