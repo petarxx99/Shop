@@ -138,10 +138,15 @@
     String buyerUbazu = request.getParameter("buyerubazu");
     if(buyerUbazu != null){
         if(buyerUbazu.equals("on")){
-            Buyer buyer = new Buyer(request.getParameter("ime"),
+            try{
+                Buyer buyer = new Buyer(request.getParameter("ime"),
                                     request.getParameter("prezime"));
-            BazaPodataka baza = new BazaPodataka();
-            baza.ubaciteUBazu(buyer, "buyers");
+                BazaPodataka baza = new BazaPodataka();
+                baza.ubaciteUBazu(buyer, "buyers");
+            } catch(Exception e){
+                e.printStackTrace();
+                response.sendRedirect("greska.jsp");
+            }
         }
     }
 %>
@@ -162,7 +167,6 @@
         }
     }
 %>
-
 
 
 
