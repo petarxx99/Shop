@@ -67,7 +67,7 @@ public class ProductServlet extends HttpServlet{
             uslovi.add("products.proizvodjac = '" + request.getParameter("proizvodjac") + "'");
         }
         if(UrlUtil.uslovPostoji("drzavaproizvodnjecheckbox", request)){
-            uslovi.add("products.drzava_proizvodnje = '" + request.getParameter("drzavaproizvodnje"));
+            uslovi.add("products.drzava_proizvodnje = '" + request.getParameter("drzavaproizvodnje") + "'");
         }
 
         if(UrlUtil.uslovPostoji("cenacheckbox", request)){

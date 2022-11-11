@@ -61,13 +61,14 @@ public class BazaPodataka {
         }
     }
 
-    private void ubaciteUsales(int product_id, int buyer_id){
+    public int ubaciteUsales(int product_id, int buyer_id){
             String sql = String.format("INSERT INTO sales (product_id, buyer_id) VALUES (%s, %s);", product_id, buyer_id);
             try(Connection connection = DriverManager.getConnection(stringZaKonekciju)){
                 Statement st = connection.createStatement();
-                st.executeUpdate(sql);
+                return st.executeUpdate(sql);
             } catch(SQLException e){
                 e.printStackTrace();
+                return -1;
             }
     }
 

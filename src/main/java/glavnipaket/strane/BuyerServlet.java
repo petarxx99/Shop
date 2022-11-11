@@ -61,10 +61,10 @@ public class BuyerServlet extends HttpServlet{
             uslovi.add("buyers.buyer_id = " + request.getParameter("buyerid"));
         }
         if(UrlUtil.uslovPostoji("imecheckbox", request)){
-            uslovi.add("buyers.ime = '" + request.getParameter("ime"));
+            uslovi.add("buyers.ime = '" + request.getParameter("ime") + "'");
         }
         if(UrlUtil.uslovPostoji("prezimecheckbox", request)){
-            uslovi.add("buyers.prezime = '" + request.getParameter("prezime"));
+            uslovi.add("buyers.prezime = '" + request.getParameter("prezime") + "'");
         }
 
         if(uslovi.size() == 0){

@@ -133,41 +133,52 @@
         <input type="submit" value="Ubacite proizvod (product) u bazu">
     </form>
 
-
-<%
-    String buyerUbazu = request.getParameter("buyerubazu");
-    if(buyerUbazu != null){
-        if(buyerUbazu.equals("on")){
-            try{
-                Buyer buyer = new Buyer(request.getParameter("ime"),
-                                    request.getParameter("prezime"));
-                BazaPodataka baza = new BazaPodataka();
-                baza.ubaciteUBazu(buyer, "buyers");
-            } catch(Exception e){
-                e.printStackTrace();
-                response.sendRedirect("greska.jsp");
+    <%
+        String buyerUbazu = request.getParameter("buyerubazu");
+        if(buyerUbazu != null){
+            if(buyerUbazu.equals("on")){
+                try{
+                    Buyer buyer = new Buyer(request.getParameter("ime"),
+                                        request.getParameter("prezime"));
+                    BazaPodataka baza = new BazaPodataka();
+                    baza.ubaciteUBazu(buyer, "buyers");
+                } catch(Exception e){
+                    e.printStackTrace();
+                    response.sendRedirect("greska.jsp");
+                }
             }
         }
-    }
-%>
-<%
-    String productUbazu = request.getParameter("productubazu");
-    if(productUbazu != null){
-        if(productUbazu.equals("on")){
-            try{
-                Product product = new Product(request.getParameter("naziv"),
-                                                           request.getParameter("drzavaproizvodnje"),
-                                                           request.getParameter("proizvodjac"),
-                                                           new BigDecimal(request.getParameter("cena")));
-                BazaPodataka baza = new BazaPodataka();
-                baza.ubaciteUBazu(product, "products");
-            } catch(Exception exceptionCena){
-                response.sendRedirect("greska.jsp");
+    %>
+    <%
+        String productUbazu = request.getParameter("productubazu");
+        if(productUbazu != null){
+            if(productUbazu.equals("on")){
+                try{
+                    Product product = new Product(request.getParameter("naziv"),
+                                                               request.getParameter("drzavaproizvodnje"),
+                                                               request.getParameter("proizvodjac"),
+                                                               new BigDecimal(request.getParameter("cena")));
+                    BazaPodataka baza = new BazaPodataka();
+                    baza.ubaciteUBazu(product, "products");
+                } catch(Exception exceptionCena){
+                    response.sendRedirect("greska.jsp");
+                }
             }
         }
-    }
-%>
+    %>
 
+    <form action="uspesnoubaceno.jsp" method="POST">
+            <label for="saleubazu"> Stiklirajte ovde i popunite polja kako biste ubacili kupovinu u bazu. </label>
+            <input type="checkbox" name="saleubazu"> <br>
+
+            <label for="kupljenproizvodid"> id kupljenog proizvoda: </label>
+            <input type="text" name="kupljenproizvodid">
+
+            <label for="idkupcabuyerid"> id kupca: </label>
+            <input type="text" name="idkupcabuyerid">
+
+            <input type="submit" value="Ubacite kupovinu u bazu">
+        </form>
 
 
 </body>
