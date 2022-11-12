@@ -3,7 +3,11 @@ package glavnipaket.strane.util;
 import glavnipaket.EntitetZaBazu;
 import glavnipaket.baza.NazivVrednostPolja;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -24,6 +28,7 @@ public class HtmlUtil {
             e.printStackTrace();
         }
     }
+
 
     public static String napraviHtmlStranu(String titl, String body){
         return String.format(
@@ -83,6 +88,69 @@ public class HtmlUtil {
         return sb.toString();
     }
 
+    public static String odvojiRedom(String[] html){
+        StringBuilder sb = new StringBuilder();
+        for(String s : html){
+            sb.append(s + "<br>");
+        }
+        return sb.toString();
+    }
 
+    public static String getHtmlLinkZaPocetnuStranicu(){
+        return  "<a href=\"index.jsp\">Kliknite ovde da biste se vratili na pocetnu stranicu </a>";
+    }
 
+    public static String napraviUpdejtFormu(String urlPolja, String nazivPolja, String checkbox){
+       return "            <label for=\"" + urlPolja + "\">" + nazivPolja + ": </label>\n" +
+                "            <input type=\"text\" name=\"" + urlPolja + "\">\n" +
+                "            <input type=\"checkbox\" name=\"" + checkbox + urlPolja +"\">\n";
+    }
+
+    public static String napraviUpdejtForme(String updateNazivUrl, String idUrl, String[] urlPolja, String[] naziviPolja, String checkbox, String imeKlase){
+        StringBuilder sb = new StringBuilder();
+        sb.append( "            <label for=\"" + updateNazivUrl + "\"> Stiklirajte ovde da biste updejtovali vrednosti " +imeKlase +".  </label>\n" +
+                "            <input type=\"checkbox\" name=\""+ updateNazivUrl+ "\">\n" +
+                "            <br>\n" +
+                "            Stiklirajte polja koja zelite da updejtujete.<br>" );
+
+        sb.append( "<br>\n" +
+        "            <label for=\"" + idUrl +"\"> Upisite id koji updejtujete </label>\n" +
+                "            <input type=\"text\" name=\"" + idUrl + "\">\n");
+
+        for(int i=0; i<urlPolja.length; i++){
+            sb.append(napraviUpdejtFormu(urlPolja[i], naziviPolja[i], checkbox));
+            sb.append("<br>");
+        }
+
+        return sb.toString();
+    }
+    public static final String CHECKBOX = "checkbox";
+
+    public static void update(HttpServletRequest request, String UPDATE_URL, String idUrl, String[]urlPolja, String checkbox, EntitetZaBazu entitet){
+        if(!UrlUtil.uslovPostoji(UPDATE_URL, request)) return;
+
+        try{
+            int id = Integer.parseInt(request.getParameter(idUrl));
+
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static String izvuciUpdejt(HttpServletRequest request, String UPDATE_URL_POLJA, String checkbox){
+        if(UrlUtil.uslovPostoji(checkbox + UPDATE_URL_POLJA, request)){
+            return request.getParameter(UPDATE_URL_POLJA);
+        } else {
+            return null;
+        }
+    }
+
+    public static String getHtmlFormeZaBrisanjeEntiteta(String urlServleta, String imeEntiteta, String checkboxZaBrisanje, String idUrl){
+        return "<form action=\"" + urlServleta + "\" method=POST>" + "\n" +
+                "<label for=\"" + checkboxZaBrisanje + "\" > Stiklirajte ovde ako hocete da brisete iz baze i upisite id koji zelite da obrisete." + "\n"
+                +"<input type=\"checkbox\" name=\"" + checkboxZaBrisanje + "\"> \n"
+                +"<input type=\"text\" name=\"" + idUrl + "\"> \n" +
+                "<input type=\"submit\" value=\" obrisite " + imeEntiteta + "\">" +
+                "</form>";
+    }
 }

@@ -3,6 +3,7 @@ package glavnipaket;
 import glavnipaket.baza.NazivVrednostPolja;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 public interface EntitetZaBazu {
@@ -20,6 +21,7 @@ public interface EntitetZaBazu {
     public EntitetZaBazu dajInstancuSaDefaultVrednostima();
     public int getId();
     public String getNazivIdPolja();
+
 
     default public Object pronadjiPolje(String imePolja, NazivVrednostPolja[] svaPolja){
         for(NazivVrednostPolja nvp : svaPolja){

@@ -4,15 +4,15 @@ package glavnipaket.baza;
 
 import java.sql.DriverManager;
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import glavnipaket.EntitetZaBazu;
-import glavnipaket.ProbniMain;
 import glavnipaket.entiteti.Product;
 import glavnipaket.entiteti.Buyer;
+
+
 
 public class BazaPodataka {
         private String stringZaKonekciju;
@@ -121,37 +121,6 @@ public class BazaPodataka {
     }
 
 
-    public Set<Product> prikaziSveKupovineJedneOsobe(long idKupca){
-            ArrayList<String> uslov = new ArrayList<>();
-            uslov.add("buyers.buyer_id=" + idKupca);
-
-            Product product = new Product().dajInstancuSaDefaultVrednostima();
-            Buyer buyer = new Buyer().dajInstancuSaDefaultVrednostima();
-
-            Buyer buyerIzTabele = (Buyer) prikaziEntiteteIzManyToManyTabelePoUslovu(
-                    buyer, product, "buyer_id", "product_id",
-                    "buyers", "products", "sales", uslov).get(0);
-            return buyerIzTabele.getProducts();
-    }
-
-    public Set<Buyer> prikaziSveKupceJednogProizvoda(long idProizvoda) {
-            ArrayList<String> uslov = new ArrayList<>();
-            uslov.add("products.product_id=" + idProizvoda);
-
-
-            Product product = new Product().dajInstancuSaDefaultVrednostima();
-            Buyer buyer = new Buyer().dajInstancuSaDefaultVrednostima();
-
-            Product productIzTabele = (Product) prikaziEntiteteIzManyToManyTabelePoUslovu(
-                    product, buyer,
-                    "product_id", "buyer_id",
-                    "products", "buyers", "sales", uslov).get(0);
-
-            return productIzTabele.getBuyers();
-    }
-
-
-
     public ArrayList prikaziKupovinePoUslovuPrekoListeProizvoda(ArrayList<String> uslovi){
         String uslov = (uslovi==NEMA_USLOVA)? "1=1" : spojiUslove(uslovi);
 
@@ -198,56 +167,6 @@ public class BazaPodataka {
     }
 
 
-    public int izbrisiteEntitet(int id, String imeTabele, String imeKljuca){
-            String sql = String.format("DELETE FROM %s WHERE %s=%s;", imeTabele, imeKljuca, id);
-            try(Connection connection = DriverManager.getConnection(stringZaKonekciju)){
-                Statement st = connection.createStatement();
-                return st.executeUpdate(sql);
-            } catch(SQLException e){
-                e.printStackTrace();
-                return -1;
-            }
-    }
-
-
-    public int updejt(NazivVrednostPolja[] poljaZaUpdejt, String imeTabele, String imeKljuca, int id){
-            final String SQL = napraviSqlUpdate(poljaZaUpdejt, imeTabele, imeKljuca, id);
-            try(Connection connection = DriverManager.getConnection(stringZaKonekciju)){
-                Statement st = connection.createStatement();
-                int ROWS_AFFECTED = st.executeUpdate(SQL);
-                return ROWS_AFFECTED;
-            } catch(SQLException exception){
-                exception.printStackTrace();
-                return SQL_EXCEPTION;
-            }
-    }
-
-    public String napraviSqlUpdate(NazivVrednostPolja[] poljaZaUpdejt, String imeTabele, String imeKljuca, int id){
-            StringBuilder sql = new StringBuilder();
-            sql.append("UPDATE " + imeTabele + " SET ");
-            sql.append(napraviUpdejtSQLIzPolja(poljaZaUpdejt, imeTabele));
-            sql.append(" WHERE " + imeKljuca + "=" + id);
-            sql.append(";");
-            return sql.toString();
-    }
-
-    private String napraviUpdejtSQLIzPolja(NazivVrednostPolja[] poljaZaUpdejt, String imeTabele){
-            StringBuilder sb = new StringBuilder();
-
-            for(int i=0; i<poljaZaUpdejt.length; i++){
-                if(i>0){
-                    sb.append(", ");
-                }
-
-                if(!poljaZaUpdejt[i].imaNavodnike){
-                    sb.append(imeTabele + "." + poljaZaUpdejt[i].nazivPolja + "=" + poljaZaUpdejt[i].vrednostPolja);
-                } else {
-                    sb.append(imeTabele + "." + poljaZaUpdejt[i].nazivPolja + "=" + "'" + poljaZaUpdejt[i].vrednostPolja + "'");
-                }
-            }
-            return sb.toString();
-    }
-
 
     private String spojiUslove(ArrayList<String> uslovi){
         StringBuilder sb = new StringBuilder();
@@ -271,6 +190,58 @@ public class BazaPodataka {
                 sb.append(stringovi[i]);
             }
             return sb.toString();
+    }
+
+
+    public int izbrisiteEntitet(int id, String imeTabele, String imeKljuca){
+        String sql = String.format("DELETE FROM %s WHERE %s=%s;", imeTabele, imeKljuca, id);
+        try(Connection connection = DriverManager.getConnection(stringZaKonekciju)){
+            Statement st = connection.createStatement();
+            return st.executeUpdate(sql);
+        } catch(SQLException e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+
+    public int update(NazivVrednostPolja[] poljaZaUpdejt, String imeTabele, String imeKljuca, int id){
+        final String SQL = napraviSqlUpdate(poljaZaUpdejt, imeTabele, imeKljuca, id);
+        try(Connection connection = DriverManager.getConnection(stringZaKonekciju)){
+            Statement st = connection.createStatement();
+            int ROWS_AFFECTED = st.executeUpdate(SQL);
+            return ROWS_AFFECTED;
+        } catch(SQLException exception){
+            exception.printStackTrace();
+            return SQL_EXCEPTION;
+        }
+    }
+
+    private String napraviSqlUpdate(NazivVrednostPolja[] poljaZaUpdejt, String imeTabele, String imeKljuca, int id){
+        StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE " + imeTabele + " SET ");
+        sql.append(napraviUpdejtSQLIzPolja(poljaZaUpdejt, imeTabele));
+        sql.append(" WHERE " + imeTabele + "." + imeKljuca + "=" + id);
+        sql.append(";");
+        return sql.toString();
+    }
+
+    private String napraviUpdejtSQLIzPolja(NazivVrednostPolja[] svaPolja, String imeTabele){
+        ArrayList<NazivVrednostPolja> poljaZaUpdejt = Arrays.stream(svaPolja).filter(polje -> polje.vrednostPolja != null).collect(Collectors.toCollection(ArrayList::new));
+        StringBuilder sb = new StringBuilder();
+
+        for(int i=0; i<poljaZaUpdejt.size(); i++){
+            if(i>0){
+                sb.append(", ");
+            }
+
+            if(!poljaZaUpdejt.get(i).imaNavodnike){
+                sb.append(imeTabele + "." + poljaZaUpdejt.get(i).nazivPolja + "=" + poljaZaUpdejt.get(i).vrednostPolja);
+            } else {
+                sb.append(imeTabele + "." + poljaZaUpdejt.get(i).nazivPolja + "=" + "'" + poljaZaUpdejt.get(i).vrednostPolja + "'");
+            }
+        }
+        return sb.toString();
     }
 
 

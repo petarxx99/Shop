@@ -6,8 +6,10 @@ import glavnipaket.baza.NazivVrednostPolja;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Product implements EntitetZaBazu {
 
@@ -134,6 +136,7 @@ public class Product implements EntitetZaBazu {
     public Set<Buyer> getBuyers(){
         return buyers;
     }
+
 
 }
 

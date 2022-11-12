@@ -5,8 +5,9 @@
 <%@page import="glavnipaket.baza.*"%>
 <%@page import="java.math.BigDecimal"%>
 <%@page import="glavnipaket.strane.util.*"%>
+<%@page import="glavnipaket.strane.*"%>
 
- <form action="Shop/products" method="post">
+ <form action="products" method="post">
         <label> Stiklirajte polja po kojima zelite da se vrsi pretraga </label> <br>
 
         <input type="checkbox" name="productidcheckbox">
@@ -36,7 +37,7 @@
         <input type="submit" value="idi na stranu products">
   </form>
 
-  <form action="Shop/buyers" method="post">
+  <form action="buyers" method="post">
 
      <label> Stiklirajte polja po kojima zelite da se vrsi pretraga </label> <br>
 
@@ -58,7 +59,7 @@
 
   </form>
 
-  <form action="Shop/sales" method="post">
+  <form action="sales" method="post">
   <label> Stiklirajte polja po kojima zelite da se vrsi pretraga. Prvo idu polja za buyers </label> <br>
              <input type="checkbox" name="buyeridcheckbox">
               <label for="buyerid"> buyer_id: </label>
@@ -101,38 +102,6 @@
   </form>
 
 
-    <form action="index.jsp" method="POST">
-        <label for="buyerubazu">Stiklijate ovde i popunite polja kako biste ubacili kupca (buyer) u bazu. </label>
-        <input type="checkbox" name="buyerubazu"> <br>
-
-        <label for="ime">ime: </label>
-        <input type="text" name="ime"> <br>
-
-        <label for="prezime">prezime: </label>
-        <input type="text" name="prezime">
-        <input type="submit" value="Ubacite kupca (buyer) u bazu.">
-    </form>
-
-    <form action="index.jsp" method="POST">
-        <label for="productubazu"> Stiklirajte ovde i popunite polja kako biste ubacili proizvod (product) u bazu. </label>
-        <input type="checkbox" name="productubazu"> <br>
-
-
-        <label for="naziv">naziv: </label>
-        <input type="text" name="naziv"> <br>
-
-        <label for="drzavaproizvodnje">drzava proizvodnje: </label>
-        <input type="text" name="drzavaproizvodnje"> <br>
-
-        <label for="proizvodjac">proizvodjac: </label>
-        <input type="text" name="proizvodjac"> <br>
-
-        <label for="cena">cena: </label>
-        <input type="text" name="cena"> <br>
-
-        <input type="submit" value="Ubacite proizvod (product) u bazu">
-    </form>
-
     <%
         String buyerUbazu = request.getParameter("buyerubazu");
         if(buyerUbazu != null){
@@ -167,19 +136,73 @@
         }
     %>
 
-    <form action="uspesnoubaceno.jsp" method="POST">
-            <label for="saleubazu"> Stiklirajte ovde i popunite polja kako biste ubacili kupovinu u bazu. </label>
-            <input type="checkbox" name="saleubazu"> <br>
 
-            <label for="kupljenproizvodid"> id kupljenog proizvoda: </label>
-            <input type="text" name="kupljenproizvodid">
 
-            <label for="idkupcabuyerid"> id kupca: </label>
-            <input type="text" name="idkupcabuyerid">
+<%
+ String saleUbazu = request.getParameter("saleubazu");
+    if(UrlUtil.uslovPostoji("saleubazu", request)){
+        try{
+            int productId = Integer.parseInt(request.getParameter("kupljenproizvodid"));
+            int buyerId = Integer.parseInt(request.getParameter("idkupcabuyerid"));
+            new BazaPodataka().ubaciteUsales(productId, buyerId);
+        } catch(Exception e){
+            e.printStackTrace();
+            response.sendRedirect("greska.jsp");
+        }
+    }
+%>
 
-            <input type="submit" value="Ubacite kupovinu u bazu">
-        </form>
 
+<%
+  if(UrlUtil.uslovPostoji(ProductServlet.UPDATE_URL, request)){
+
+        try {
+            int id = Integer.parseInt(request.getParameter(ProductServlet.ID_ZA_UPDATE_URL));
+            String novNaziv = HtmlUtil.izvuciUpdejt(request, ProductServlet.UPDATE_NAZIV_URL, ProductServlet.CHECKBOX);
+            NazivVrednostPolja nvpNaziv = new NazivVrednostPolja("naziv", novNaziv, true);
+
+
+            String novProizvodjac = HtmlUtil.izvuciUpdejt(request, ProductServlet.UPDATE_PROIZVODJAC_URL, ProductServlet.CHECKBOX);
+            NazivVrednostPolja nvpProizvodjac = new NazivVrednostPolja("proizvodjac", novProizvodjac, true);
+
+            String novaDrzava = HtmlUtil.izvuciUpdejt(request, ProductServlet.UPDATE_DRZAVA_URL, ProductServlet.CHECKBOX);
+            NazivVrednostPolja nvpDrzava = new NazivVrednostPolja("drzava_proizvodnje", novaDrzava, true);
+
+            String novaCenaString = HtmlUtil.izvuciUpdejt(request, ProductServlet.UPDATE_CENA_URL, ProductServlet.CHECKBOX);
+            BigDecimal novaCena = null;
+            if(novaCenaString != null){
+                novaCena = new BigDecimal(novaCenaString);
+            }
+            NazivVrednostPolja nvpCena = new NazivVrednostPolja("cena", novaCena, false);
+
+            new BazaPodataka().update(new NazivVrednostPolja[]{nvpNaziv, nvpProizvodjac, nvpDrzava, nvpCena}, "products", "product_id", id);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+  }
+%>
+
+
+
+
+<%
+    if(UrlUtil.uslovPostoji(BuyerServlet.UPDATE_URL, request)){
+         try {
+                    int id = Integer.parseInt(request.getParameter(BuyerServlet.ID_ZA_UPDATE_URL));
+                    String novoIme = HtmlUtil.izvuciUpdejt(request, BuyerServlet.UPDATE_IME, BuyerServlet.CHECKBOX);
+                    NazivVrednostPolja nvpIme = new NazivVrednostPolja("ime", novoIme, true);
+
+                    String novoPrezime = HtmlUtil.izvuciUpdejt(request, BuyerServlet.UPDATE_PREZIME, BuyerServlet.CHECKBOX);
+                    NazivVrednostPolja nvpPrezime = new NazivVrednostPolja("prezime", novoPrezime, true);
+
+                    new BazaPodataka().update(new NazivVrednostPolja[]{nvpIme, nvpPrezime}, "buyers", "buyer_id", id);
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+    }
+
+
+%>
 
 </body>
 </html>

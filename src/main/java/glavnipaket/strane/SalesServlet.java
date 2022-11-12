@@ -24,12 +24,25 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@WebServlet(urlPatterns = {"/Shop/sales"})
+@WebServlet(urlPatterns = {"/sales"})
 public class SalesServlet extends HttpServlet{
 
     public static final String USLOVI_POSTOJE = "uslovipostoje";
     public static final String USLOV = "uslov";
     private boolean prvaProba = true;
+    private static final String formaZaNovuKupovinu =
+            " <form action=\"index.jsp\" method=\"POST\">\n" +
+                    "            <label for=\"saleubazu\"> Stiklirajte ovde i popunite polja kako biste ubacili kupovinu u bazu. </label>\n" +
+                    "            <input type=\"checkbox\" name=\"saleubazu\"> <br>\n" +
+                    "\n" +
+                    "            <label for=\"kupljenproizvodid\"> id kupljenog proizvoda: </label>\n" +
+                    "            <input type=\"text\" name=\"kupljenproizvodid\">\n" +
+                    "\n" +
+                    "            <label for=\"idkupcabuyerid\"> id kupca: </label>\n" +
+                    "            <input type=\"text\" name=\"idkupcabuyerid\">\n" +
+                    "\n" +
+                    "            <input type=\"submit\" value=\"Ubacite kupovinu u bazu\">\n" +
+                    "        </form>";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -45,7 +58,7 @@ public class SalesServlet extends HttpServlet{
         try {
             BazaPodataka baza = new BazaPodataka();
             String tabelaHtml = napraviHtmlTabeleProdajaUzPomocPodatakaIzBaze(request, response, baza);
-            HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", tabelaHtml);
+            HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", tabelaHtml + formaZaNovuKupovinu + HtmlUtil.getHtmlLinkZaPocetnuStranicu());
         } catch(MojException exception){
             if(prvaProba){
                 prvaProba = false;
