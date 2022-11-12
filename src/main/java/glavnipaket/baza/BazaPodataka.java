@@ -61,17 +61,23 @@ public class BazaPodataka {
         }
     }
 
-    public int ubaciteUsales(int product_id, int buyer_id){
+    public void ubaciteUsales(int product_id, int buyer_id){
             String sql = String.format("INSERT INTO sales (product_id, buyer_id) VALUES (%s, %s);", product_id, buyer_id);
-            try(Connection connection = DriverManager.getConnection(stringZaKonekciju)){
-                Statement st = connection.createStatement();
-                return st.executeUpdate(sql);
-            } catch(SQLException e){
-                e.printStackTrace();
-                return -1;
-            }
+            executeUpdate(sql);
+            String sqlProduct = String.format("UPDATE products SET products.broj_prodaja = (Select broj_prodaja WHERE product_id=%s) + 1 WHERE product_id=%s;", product_id, product_id);
+            executeUpdate(sqlProduct);
+            String sqlBuyer = String.format("UPDATE buyers SET broj_kupovina = (Select broj_kupovina WHERE buyer_id=%s) + 1 WHERE buyer_id=%s;", buyer_id, buyer_id);
+            executeUpdate(sqlBuyer);
     }
 
+    private void executeUpdate(String sql){
+        try(Connection connection = DriverManager.getConnection(stringZaKonekciju)){
+            Statement st = connection.createStatement();
+            st.executeUpdate(sql);
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
 
 
     private ArrayList<EntitetZaBazu> izvuci2entitetaIzBaze(String sql, EntitetZaBazu instancaEntitetaZaPrikaz, EntitetZaBazu entitetDrugeTabele, NazivVrednostPolja[] nvpEntitetaZaPrikaz, NazivVrednostPolja[] nvpDrugeTabele){

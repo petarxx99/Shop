@@ -85,7 +85,7 @@ public class ProductServlet extends HttpServlet{
                 obradiPodatke(request, response);
             } else {
                 exception.printStackTrace();
-                HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Product", UrlUtil.EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE);
+                HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Product", UrlUtil.EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE + "<br>" + HtmlUtil.odvojiRedom(new String[]{FORMA_ZA_NOVI_PROIZVOD, getUpdateHtml(), getHtmlFormeZaBrisanje(), HtmlUtil.getHtmlLinkZaPocetnuStranicu()}));
             }
         }
     }

@@ -65,7 +65,7 @@ public class SalesServlet extends HttpServlet{
                 obradiPodatke(request, response);
             } else {
                 exception.printStackTrace();
-                HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", UrlUtil.EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE);
+                HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", UrlUtil.EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE + "<br>" + formaZaNovuKupovinu + HtmlUtil.getHtmlLinkZaPocetnuStranicu());
             }
         }
     }

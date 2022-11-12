@@ -73,7 +73,7 @@ public class BuyerServlet extends HttpServlet{
                     obradiPodatke(request, response);
                 } else {
                     exception.printStackTrace();
-                    HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", UrlUtil.EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE);
+                    HtmlUtil.dajHtmlStranuKrajnjemKorisniku(response, "Sales", UrlUtil.EXCEPTION_PRILIKOM_PRIKAZIVANJA_TABELE + "<br>" + HtmlUtil.odvojiRedom(new String[]{FORMA_ZA_NOVOG_KUPCA, getHtmlUpdate(), getHtmlZaBrisanje(), HtmlUtil.getHtmlLinkZaPocetnuStranicu()}));
                 }
             }
     }

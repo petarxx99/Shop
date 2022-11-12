@@ -12,31 +12,22 @@ public class Buyer implements EntitetZaBazu {
     public int buyer_id = NEISPRAVAN_ID;
     private String ime = NEINICIJALIZOVAN_STRING;
     private String prezime = NEINICIJALIZOVAN_STRING;
+    private int broj_kupovina = 0;
     private Set<Product> products;
 
 
     public Buyer(){}
-    public Buyer(int buyer_id, String ime, String prezime){
+    public Buyer(int buyer_id, String ime, String prezime, int broj_kupovina){
         this.buyer_id = buyer_id;
         this.ime = ime;
         this.prezime = prezime;
+        this.broj_kupovina = broj_kupovina;
     }
-    public Buyer(String ime, String prezime){
+
+    public Buyer(String ime, String prezime, int broj_kupovina) {
         this.ime = ime;
         this.prezime = prezime;
-    }
-
-
-    @Override
-    public String[] getNazivePolja() {
-        return new String[]{"buyer_id", "ime", "prezime"};
-    }
-
-    @Override
-    public void inicijalizujObjekatPodacimaIzBaze(ArrayList podaciIzBaze) {
-        buyer_id = (int)podaciIzBaze.get(0);
-        ime = (String)podaciIzBaze.get(1);
-        prezime = (String)podaciIzBaze.get(2);
+        this.broj_kupovina = broj_kupovina;
     }
 
     @Override
@@ -51,14 +42,16 @@ public class Buyer implements EntitetZaBazu {
         return new NazivVrednostPolja[]{
                 new NazivVrednostPolja("buyer_id", buyer_id, false),
                 new NazivVrednostPolja("ime", ime, true),
-                new NazivVrednostPolja("prezime", prezime, true)};
+                new NazivVrednostPolja("prezime", prezime, true),
+                new NazivVrednostPolja("broj_kupovina", broj_kupovina, false)};
     }
 
     @Override
     public NazivVrednostPolja[] getNaziveVrednostiPoljaBezId(){
         return new NazivVrednostPolja[]{
                 new NazivVrednostPolja("ime", ime, true),
-                new NazivVrednostPolja("prezime", prezime, true)};
+                new NazivVrednostPolja("prezime", prezime, true),
+                new NazivVrednostPolja("broj_kupovina", broj_kupovina, false)};
     }
 
     @Override
@@ -71,7 +64,7 @@ public class Buyer implements EntitetZaBazu {
 
     @Override
     public Buyer dajInstancuSaDefaultVrednostima() {
-        return new Buyer(NEISPRAVAN_ID, NEINICIJALIZOVAN_STRING, NEINICIJALIZOVAN_STRING);
+        return new Buyer(NEISPRAVAN_ID, NEINICIJALIZOVAN_STRING, NEINICIJALIZOVAN_STRING, 0);
     }
 
     @Override
@@ -84,12 +77,6 @@ public class Buyer implements EntitetZaBazu {
         return "buyer_id";
     }
 
-    @Override
-    public void inicijalizujPodacimaIzBaze(NazivVrednostPolja[] nvpIzBaze){
-        buyer_id = (Integer)pronadjiPolje("buyer_id", nvpIzBaze);
-        ime = (String)pronadjiPolje("ime", nvpIzBaze);
-        prezime = (String)pronadjiPolje("prezime", nvpIzBaze);
-    }
 
 
     public void inicijalizujPolje(NazivVrednostPolja nvp){
@@ -103,6 +90,8 @@ public class Buyer implements EntitetZaBazu {
             case "prezime":
                 prezime = (String) nvp.vrednostPolja;
                 break;
+            case "broj_kupovina":
+                broj_kupovina = (int) nvp.vrednostPolja;
             default:
         }
     }

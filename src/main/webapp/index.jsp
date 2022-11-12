@@ -108,7 +108,8 @@
             if(buyerUbazu.equals("on")){
                 try{
                     Buyer buyer = new Buyer(request.getParameter("ime"),
-                                        request.getParameter("prezime"));
+                                        request.getParameter("prezime"),
+                                        0);
                     BazaPodataka baza = new BazaPodataka();
                     baza.ubaciteUBazu(buyer, "buyers");
                 } catch(Exception e){
@@ -126,7 +127,8 @@
                     Product product = new Product(request.getParameter("naziv"),
                                                                request.getParameter("drzavaproizvodnje"),
                                                                request.getParameter("proizvodjac"),
-                                                               new BigDecimal(request.getParameter("cena")));
+                                                               new BigDecimal(request.getParameter("cena")),
+                                                               0);
                     BazaPodataka baza = new BazaPodataka();
                     baza.ubaciteUBazu(product, "products");
                 } catch(Exception exceptionCena){

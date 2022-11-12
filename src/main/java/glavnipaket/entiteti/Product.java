@@ -19,36 +19,25 @@ public class Product implements EntitetZaBazu {
     private String proizvodjac = NEINICIJALIZOVAN_STRING;
     private String drzava_proizvodnje = NEINICIJALIZOVAN_STRING;
     private BigDecimal cena = NEINICIJALIZOVANA_CENA;
+    private int broj_prodaja = 0;
     private Set<Buyer> buyers;
 
     public Product(){}
-    public Product(int product_id, String naziv, String proizvodjac, String drzava_proizvodnje, BigDecimal cena){
+    public Product(int product_id, String naziv, String proizvodjac, String drzava_proizvodnje, BigDecimal cena, int broj_prodaja){
         this.product_id = product_id;
         this.naziv = naziv;
         this.proizvodjac = proizvodjac;
         this.drzava_proizvodnje = drzava_proizvodnje;
         this.cena = cena;
+        this.broj_prodaja = broj_prodaja;
     }
 
-    public Product(String naziv, String proizvodjac, String drzava_proizvodnje, BigDecimal cena) {
+    public Product(String naziv, String proizvodjac, String drzava_proizvodnje, BigDecimal cena, int broj_prodaja) {
         this.naziv = naziv;
         this.proizvodjac = proizvodjac;
         this.drzava_proizvodnje = drzava_proizvodnje;
         this.cena = cena;
-    }
-
-    @Override
-    public String[] getNazivePolja() {
-        return new String[]{"product_id", "naziv", "proizvodjac", "drzava_proizvodnje", "cena"};
-    }
-
-    @Override
-    public void inicijalizujObjekatPodacimaIzBaze(ArrayList podaciIzBaze) {
-        product_id = (int)podaciIzBaze.get(0);
-        naziv = (String)podaciIzBaze.get(1);
-        proizvodjac = (String)podaciIzBaze.get(2);
-        drzava_proizvodnje = (String)podaciIzBaze.get(3);
-        cena = (BigDecimal)podaciIzBaze.get(4);
+        this.broj_prodaja = broj_prodaja;
     }
 
     @Override
@@ -68,7 +57,8 @@ public class Product implements EntitetZaBazu {
                 new NazivVrednostPolja("naziv", naziv, true),
                 new NazivVrednostPolja("proizvodjac", proizvodjac, true),
                 new NazivVrednostPolja("drzava_proizvodnje", drzava_proizvodnje, true),
-                new NazivVrednostPolja("cena", cena, false)};
+                new NazivVrednostPolja("cena", cena, false),
+                new NazivVrednostPolja("broj_prodaja", broj_prodaja, false)};
     }
 
     @Override
@@ -77,7 +67,8 @@ public class Product implements EntitetZaBazu {
                 new NazivVrednostPolja("naziv", naziv, true),
                 new NazivVrednostPolja("proizvodjac", proizvodjac, true),
                 new NazivVrednostPolja("drzava_proizvodnje", drzava_proizvodnje, true),
-                new NazivVrednostPolja("cena", cena, false)};
+                new NazivVrednostPolja("cena", cena, false),
+                new NazivVrednostPolja("broj_prodaja", broj_prodaja, false)};
     }
 
     @Override
@@ -90,7 +81,7 @@ public class Product implements EntitetZaBazu {
 
     @Override
     public Product dajInstancuSaDefaultVrednostima() {
-        return new Product(NEISPRAVAN_ID, NEINICIJALIZOVAN_STRING, NEINICIJALIZOVAN_STRING, NEINICIJALIZOVAN_STRING, NEINICIJALIZOVANA_CENA);
+        return new Product(NEISPRAVAN_ID, NEINICIJALIZOVAN_STRING, NEINICIJALIZOVAN_STRING, NEINICIJALIZOVAN_STRING, NEINICIJALIZOVANA_CENA, 0);
     }
 
     @Override
@@ -103,14 +94,7 @@ public class Product implements EntitetZaBazu {
         return "product_id";
     }
 
-    @Override
-    public void inicijalizujPodacimaIzBaze(NazivVrednostPolja[] nvpIzBaze){
-        product_id = (Integer)pronadjiPolje("product_id", nvpIzBaze);
-        naziv = (String) pronadjiPolje("naziv", nvpIzBaze);
-        proizvodjac = (String) pronadjiPolje("proizvodjac", nvpIzBaze);
-        drzava_proizvodnje = (String) pronadjiPolje("drzava_proizvodnje", nvpIzBaze);
-        cena = (BigDecimal) pronadjiPolje("cena", nvpIzBaze);
-    }
+
 
     public void inicijalizujPolje(NazivVrednostPolja nvp){
         switch(nvp.nazivPolja){
@@ -129,6 +113,8 @@ public class Product implements EntitetZaBazu {
             case "cena":
                 cena = (BigDecimal) nvp.vrednostPolja;
                 break;
+            case "broj_prodaja":
+                broj_prodaja = (int) nvp.vrednostPolja;
             default:
         }
     }
